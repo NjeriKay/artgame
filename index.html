@@ -1,1 +1,1120 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Cathedral of Forms — Art as Interface</title>
+<meta name="description" content="An interactive gothic-cathedral game teaching the elements of art, principles of design, color theory, art history, and media." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --stone: #14110c;
+  --stone-2: #1d1811;
+  --stone-3: #292117;
+  --mortar: #3a3226;
+  --gold: #c9963a;
+  --gold-light: #e8c96a;
+  --gold-pale: #f5dfa0;
+  --parchment: #efe3c8;
+  --parchment-dim: #c8bc9e;
+  --sapphire: #1c3a6e;
+  --sapphire-light: #3f66ab;
+  --ruby: #7c1a1a;
+  --ruby-light: #b23a3a;
+  --emerald: #1f5c3f;
+  --emerald-light: #3a9066;
+  --amethyst: #4b2e6b;
+  --amethyst-light: #7a4fa8;
+  --amber: #b5651d;
+  --amber-light: #dd8c3c;
+  --ok: #4caf6d;
+  --bad: #c1443a;
+}
+
+* , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, rgba(201,150,58,.07), transparent 60%),
+    repeating-linear-gradient(0deg, var(--stone) 0px, var(--stone) 2px, var(--stone-2) 2px, var(--stone-2) 4px),
+    var(--stone);
+  color: var(--parchment);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+h1, h2, h3 { font-family: 'Cinzel', serif; color: var(--gold-pale); font-weight: 600; }
+
+button {
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.btn-gold, .btn-ghost {
+  font-size: .78rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: .85rem 2.1rem;
+  border: 1px solid var(--gold);
+  transition: all .25s;
+}
+.btn-gold {
+  background: linear-gradient(160deg, var(--gold-light), var(--gold));
+  color: var(--stone);
+  font-weight: 700;
+}
+.btn-gold:hover { background: linear-gradient(160deg, var(--gold-pale), var(--gold-light)); transform: translateY(-2px); }
+.btn-gold:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.btn-ghost {
+  color: var(--gold-light);
+  background: rgba(201,150,58,.06);
+}
+.btn-ghost:hover { background: rgba(201,150,58,.16); color: var(--gold-pale); }
+
+/* ─── TOPBAR ─────────────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .9rem 2rem;
+  background: rgba(20,17,12,.88);
+  border-bottom: 1px solid rgba(201,150,58,.3);
+  backdrop-filter: blur(6px);
+}
+.brand { font-family: 'UnifrakturCook', cursive; font-size: 1.3rem; color: var(--gold-light); }
+.brand-sub {
+  font-family: 'Cinzel', serif;
+  font-size: .62rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+main { padding-top: 4.5rem; }
+
+/* ─── SCREENS ────────────────────────────────────────── */
+.screen { display: none; min-height: calc(100vh - 4.5rem); padding: 3rem 1.5rem 5rem; }
+.screen.active { display: flex; flex-direction: column; align-items: center; }
+
+.arch-frame {
+  max-width: 640px;
+  text-align: center;
+  padding: 3rem 2.5rem 3.5rem;
+  background: linear-gradient(180deg, rgba(201,150,58,.05), rgba(0,0,0,.25));
+  border: 1px solid rgba(201,150,58,.28);
+  clip-path: polygon(50% 0%, 100% 22%, 100% 100%, 0% 100%, 0% 22%);
+  position: relative;
+}
+.arch-frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+}
+
+/* rose motif — used in hero + completion */
+.rose-hero {
+  width: 160px; height: 160px;
+  margin: 0 auto 1.8rem;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--sapphire) 0deg 51deg, var(--stone-3) 51deg 62deg,
+    var(--ruby) 62deg 113deg, var(--stone-3) 113deg 124deg,
+    var(--emerald) 124deg 175deg, var(--stone-3) 175deg 186deg,
+    var(--amethyst) 186deg 237deg, var(--stone-3) 237deg 248deg,
+    var(--amber) 248deg 299deg, var(--stone-3) 299deg 310deg,
+    var(--sapphire) 310deg 360deg
+  );
+  box-shadow: 0 0 40px rgba(201,150,58,.25), inset 0 0 25px rgba(0,0,0,.5);
+  position: relative;
+  opacity: .55;
+  filter: saturate(.6);
+}
+.rose-hero.complete { opacity: 1; filter: saturate(1); animation: glow 3s ease-in-out infinite; }
+.rose-hero::after {
+  content: '';
+  position: absolute; inset: 30%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-pale), var(--gold) 70%);
+  box-shadow: 0 0 20px rgba(232,201,106,.7);
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 40px rgba(201,150,58,.35), inset 0 0 25px rgba(0,0,0,.5); }
+  50% { box-shadow: 0 0 70px rgba(201,150,58,.65), inset 0 0 25px rgba(0,0,0,.5); }
+}
+
+h1.title { font-family: 'Cinzel Decorative', serif; font-size: clamp(2.1rem, 6vw, 3.2rem); line-height: 1.15; color: var(--gold-pale); text-shadow: 0 0 40px rgba(201,150,58,.35); }
+h1.title span { color: var(--gold); }
+.lede { color: var(--parchment-dim); margin: 1.3rem 0 1.8rem; font-size: 1.05rem; }
+.eyebrow { font-family: 'Cinzel', serif; font-size: .65rem; letter-spacing: .45em; text-transform: uppercase; color: var(--gold); margin-bottom: .6rem; }
+
+/* ─── NAVE / HUB ─────────────────────────────────────── */
+.nave-header { text-align: center; max-width: 700px; margin-bottom: 2.5rem; }
+.rose-progress {
+  width: 200px; height: 200px;
+  margin: 1.4rem auto 1rem;
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(
+    var(--c0, var(--stone-3)) 0deg 72deg,
+    var(--c1, var(--stone-3)) 72deg 144deg,
+    var(--c2, var(--stone-3)) 144deg 216deg,
+    var(--c3, var(--stone-3)) 216deg 288deg,
+    var(--c4, var(--stone-3)) 288deg 360deg
+  );
+  box-shadow: inset 0 0 30px rgba(0,0,0,.6), 0 0 25px rgba(201,150,58,.15);
+  border: 2px solid rgba(201,150,58,.35);
+  transition: background 1.2s ease;
+}
+.rose-progress::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(rgba(0,0,0,.55) 0deg 1.2deg, transparent 1.2deg 18deg);
+  mix-blend-mode: multiply;
+}
+.rose-hub {
+  position: absolute; inset: 38%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-pale), var(--gold) 75%);
+  box-shadow: 0 0 18px rgba(232,201,106,.6), inset 0 0 8px rgba(0,0,0,.35);
+  border: 2px solid var(--stone);
+}
+#progress-text { color: var(--parchment-dim); font-family: 'Cinzel', serif; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
+
+.chapel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.6rem;
+  max-width: 1080px;
+  width: 100%;
+}
+.chapel-card {
+  position: relative;
+  padding: 2.1rem 1.5rem 1.7rem;
+  border: 1px solid rgba(201,150,58,.3);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.25));
+  clip-path: polygon(50% 0%, 100% 16%, 100% 100%, 0% 100%, 0% 16%);
+  text-align: center;
+  transition: transform .25s, border-color .25s;
+}
+.chapel-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+.chapel-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 70%; height: 55px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  opacity: .5;
+}
+.chapel-card[data-done="true"] { border-color: var(--gold); box-shadow: 0 0 25px rgba(201,150,58,.18); }
+.chapel-glass {
+  width: 64px; height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(232,201,106,.5);
+  box-shadow: inset 0 0 12px rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+.chapel-name { font-size: 1.02rem; margin-bottom: .3rem; }
+.chapel-sub { font-size: .8rem; color: var(--parchment-dim); font-style: italic; margin-bottom: .9rem; }
+.chapel-status {
+  font-family: 'Cinzel', serif;
+  font-size: .62rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: .35rem .9rem;
+  border: 1px solid rgba(201,150,58,.4);
+  display: inline-block;
+  color: var(--gold);
+}
+.chapel-card[data-done="true"] .chapel-status { color: var(--stone); background: var(--gold); border-color: var(--gold); }
+
+/* ─── MODAL ──────────────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(6,5,3,.86);
+  backdrop-filter: blur(3px);
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3.5rem 1.2rem 3rem;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal-arch {
+  width: 100%; max-width: 700px;
+  background: linear-gradient(180deg, var(--stone-3), var(--stone-2));
+  border: 1px solid rgba(201,150,58,.4);
+  clip-path: polygon(50% 0%, 100% 10%, 100% 100%, 0% 100%, 0% 10%);
+  padding: 3.2rem 2.2rem 2.4rem;
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 1.1rem; right: 1.3rem;
+  font-size: 1.1rem; color: var(--parchment-dim);
+  width: 2rem; height: 2rem;
+}
+.modal-close:hover { color: var(--gold-light); }
+.chapter-kicker { text-align:center; }
+.chapter-kicker .eyebrow { margin-bottom:.3rem; }
+.chapter-kicker h2 { font-size: 1.5rem; margin-bottom: .3rem; }
+.chapter-kicker .chapel-sub { margin-bottom: 1.5rem; }
+.lesson-text { color: var(--parchment); font-size: 1rem; margin-bottom: 1.6rem; }
+.lesson-text p + p { margin-top: .8rem; }
+.center { text-align: center; }
+
+/* ─── MATCH ACTIVITY ─────────────────────────────────── */
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; margin-bottom: 1.5rem; }
+.match-col { display: flex; flex-direction: column; gap: .6rem; }
+.match-item {
+  padding: .7rem .9rem;
+  border: 1px solid rgba(201,150,58,.35);
+  background: rgba(255,255,255,.02);
+  font-size: .92rem;
+  text-align: left;
+  transition: all .2s;
+}
+.match-item:hover:not(.matched) { border-color: var(--gold); background: rgba(201,150,58,.08); }
+.match-item.selected { border-color: var(--gold-light); background: rgba(201,150,58,.18); box-shadow: 0 0 12px rgba(201,150,58,.3); }
+.match-item.matched { border-color: var(--ok); color: var(--ok); opacity: .55; cursor: default; }
+.match-item.wrong { animation: shake .35s; border-color: var(--bad); }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+/* ─── QUIZ ───────────────────────────────────────────── */
+.quiz-progress { font-size: .75rem; color: var(--parchment-dim); text-align:center; margin-bottom: .6rem; letter-spacing:.1em; text-transform:uppercase; font-family:'Cinzel',serif; }
+.demo-box {
+  height: 130px; margin: 0 auto 1.3rem;
+  border: 1px solid rgba(201,150,58,.3);
+  background: rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.quiz-q { text-align: center; font-size: 1rem; margin-bottom: 1.1rem; color: var(--parchment); }
+.quiz-options { display: grid; gap: .6rem; margin-bottom: 1rem; }
+.quiz-opt {
+  padding: .75rem 1rem; text-align: left;
+  border: 1px solid rgba(201,150,58,.35);
+  background: rgba(255,255,255,.02);
+  font-family: 'EB Garamond', serif; font-size: .95rem;
+  transition: all .2s;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--gold); background: rgba(201,150,58,.08); }
+.quiz-opt.correct { border-color: var(--ok); background: rgba(76,175,109,.15); color: var(--ok); }
+.quiz-opt.incorrect { border-color: var(--bad); background: rgba(193,68,58,.15); color: var(--bad); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-feedback { font-size: .9rem; color: var(--gold-light); font-style: italic; text-align:center; min-height: 1.4em; margin-bottom: .8rem; }
+
+/* demo drawings for principles */
+.demo-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--gold-light); position: absolute; }
+.demo-sq { width: 16px; height: 16px; background: var(--sapphire-light); position: absolute; }
+
+/* ─── COLOR CHAPEL ───────────────────────────────────── */
+.swatch-row { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.swatch {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.25);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.35);
+}
+.mix-plus { font-family:'Cinzel',serif; font-size: 1.4rem; color: var(--gold); align-self: center; }
+.mix-options { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.mix-opt { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+.mix-opt .swatch { cursor: pointer; transition: transform .2s; }
+.mix-opt .swatch:hover { transform: scale(1.08); }
+.mix-opt span { font-size: .7rem; color: var(--parchment-dim); font-family:'Cinzel',serif; letter-spacing:.08em; text-transform:uppercase; }
+
+.chip-pool { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-bottom: 1.3rem; }
+.chip {
+  padding: .55rem 1rem;
+  border: 1px solid rgba(201,150,58,.4);
+  font-size: .85rem; font-family:'Cinzel',serif; letter-spacing:.05em;
+  background: rgba(255,255,255,.03);
+  transition: all .2s;
+}
+.chip.selected { border-color: var(--gold-light); background: rgba(201,150,58,.2); }
+.chip.placed { opacity: .4; cursor: default; }
+.bin-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+.bin {
+  min-width: 150px; flex: 1; max-width: 220px;
+  border: 1px dashed rgba(201,150,58,.4);
+  padding: .9rem .7rem;
+  text-align: center;
+}
+.bin h4 { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: .6rem; }
+.bin .placed-chip { font-size: .78rem; color: var(--ok); padding: .25rem 0; border-top: 1px solid rgba(76,175,109,.2); }
+.bin .placed-chip:first-of-type { border-top: none; }
+
+/* ─── TIMELINE ORDER ─────────────────────────────────── */
+.order-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.2rem; }
+.order-row {
+  display: flex; align-items: center; gap: .8rem;
+  padding: .7rem .9rem;
+  border: 1px solid rgba(201,150,58,.3);
+  background: rgba(255,255,255,.02);
+}
+.order-row.correct { border-color: var(--ok); background: rgba(76,175,109,.1); }
+.order-row.wrong { border-color: var(--bad); background: rgba(193,68,58,.08); }
+.order-row .era-name { flex: 1; font-size: .92rem; }
+.order-row .era-date { font-size: .78rem; color: var(--parchment-dim); font-style: italic; display:none; }
+.order-row.revealed .era-date { display: inline; }
+.order-btns { display: flex; gap: .3rem; }
+.order-btns button { border: 1px solid rgba(201,150,58,.4); width: 1.9rem; height: 1.9rem; font-size: .8rem; color: var(--gold-light); }
+.order-btns button:hover { background: rgba(201,150,58,.15); }
+.order-btns button:disabled { opacity: .25; cursor: default; }
+
+.chapter-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.4rem; flex-wrap: wrap; }
+.seal-banner { text-align: center; color: var(--ok); font-family:'Cinzel',serif; font-size: .85rem; letter-spacing:.1em; text-transform:uppercase; margin-bottom: .6rem; min-height: 1.3em; }
+
+footer {
+  text-align: center; padding: 2rem; font-family:'Cinzel',serif;
+  font-size: .6rem; letter-spacing: .3em; color: rgba(212,180,131,.4);
+  border-top: 1px solid rgba(201,150,58,.15);
+}
+
+@media (max-width: 560px) {
+  .match-grid { grid-template-columns: 1fr; }
+  .arch-frame, .modal-arch { padding-left: 1.3rem; padding-right: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">✝ Cathedral of Forms</span>
+  <span class="brand-sub">Art as Interface</span>
+</header>
+
+<main>
+
+  <section id="screen-intro" class="screen active">
+    <div class="arch-frame">
+      <div class="rose-hero" aria-hidden="true"></div>
+      <p class="eyebrow">An Interactive Companion</p>
+      <h1 class="title">The Cathedral<br><span>of Forms</span></h1>
+      <p class="lede">Beyond the great doors stands a cathedral built from the language of art itself. Five chapels hold five mysteries — the elements that build an image, the principles that order it, the color that gives it light, the history that gave it shape, and the many forms it can take. Walk the nave, complete each rite, and watch the windows fill with color.</p>
+      <button class="btn-gold" data-action="enter-nave">Enter the Nave</button>
+    </div>
+  </section>
+
+  <section id="screen-nave" class="screen">
+    <div class="nave-header">
+      <p class="eyebrow">The Nave</p>
+      <h2>Choose a Chapel</h2>
+      <div id="rose-progress" class="rose-progress"><div class="rose-hub"></div></div>
+      <p id="progress-text">0 of 5 chapels illuminated</p>
+      <div id="nave-cta" class="chapter-actions" style="display:none;margin-top:1.2rem;">
+        <button class="btn-gold" data-action="view-complete">Behold the Rose Window</button>
+      </div>
+    </div>
+    <div class="chapel-grid" id="chapel-grid"></div>
+  </section>
+
+  <section id="screen-complete" class="screen">
+    <div class="arch-frame">
+      <div class="rose-hero complete" aria-hidden="true"></div>
+      <p class="eyebrow">Fiat Lux</p>
+      <h1 class="title">The Windows<br><span>Are Lit</span></h1>
+      <p class="lede">You have walked the full length of the Cathedral of Forms and named what dwells in line, light, and legacy. The rose window burns behind you.</p>
+      <p id="final-score" class="lede" style="margin-top:-1rem;"></p>
+      <button class="btn-ghost" data-action="restart">Walk the Nave Again</button>
+    </div>
+  </section>
+
+</main>
+
+<div id="modal-overlay" class="modal-overlay">
+  <div class="modal-arch">
+    <button class="modal-close" data-action="close-modal" aria-label="Close">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<footer>✝ &nbsp; Cathedral of Forms &nbsp; · &nbsp; Built for Art as Interface &nbsp; · &nbsp; Njeri Kinuthia &nbsp; ✝</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "cathedralOfForms.v1";
+
+  var CHAPELS = [
+    {
+      id: "elements",
+      name: "The Cloister of Elements",
+      sub: "Elements of Art",
+      color: "var(--sapphire-light)",
+      cssColor: "#3f66ab",
+      icon: "◈",
+      type: "match",
+      intro: [
+        "Every image, however grand, is built from the same handful of stones. The elements of art are the raw materials — the mortar and glass — from which all pictures are built.",
+        "Study each term, then match it to the stone that names it."
+      ],
+      pairs: [
+        { term: "Line", def: "A mark with more length than width. It can be straight, curved, thick, or thin, and it defines edges or leads the eye." },
+        { term: "Shape", def: "A flat, enclosed area — geometric like a circle, or organic like a puddle." },
+        { term: "Form", def: "A shape given volume: height, width, and depth, like a shape lifted into three dimensions." },
+        { term: "Value", def: "How light or dark something is. Value creates contrast and can suggest depth or drama." },
+        { term: "Color", def: "Light of a particular wavelength, described by hue, value, and intensity." },
+        { term: "Texture", def: "The surface quality of a thing — how it looks or feels, whether the surface is truly rough or only painted to appear so." },
+        { term: "Space", def: "The area around, between, and within objects — both the filled 'positive' space and the empty 'negative' space." }
+      ]
+    },
+    {
+      id: "principles",
+      name: "The Transept of Principles",
+      sub: "Principles of Design",
+      color: "var(--amethyst-light)",
+      cssColor: "#7a4fa8",
+      icon: "✚",
+      type: "quiz",
+      intro: [
+        "If the elements are the stones, the principles are the architecture — the rules that arrange line, shape, and color into something that holds together and holds the eye.",
+        "Study each pane of glass, then name the principle it demonstrates."
+      ],
+      questions: [
+        {
+          demo: "symBalance",
+          q: "Two identical shapes sit mirrored on either side of a center line. Which principle is at work?",
+          options: ["Balance", "Pattern", "Emphasis", "Unity"],
+          answer: 0,
+          why: "Symmetrical balance distributes visual weight evenly around a central axis, giving the composition a sense of stability."
+        },
+        {
+          demo: "emphasis",
+          q: "One small red shape glows among a field of identical grey ones. Which principle is at work?",
+          options: ["Rhythm", "Emphasis", "Proportion", "Movement"],
+          answer: 1,
+          why: "Emphasis (or focal point) uses contrast — of color, scale, or isolation — to draw the eye to one area first."
+        },
+        {
+          demo: "movement",
+          q: "A diagonal chain of shapes grows steadily larger toward one corner. Which principle is at work?",
+          options: ["Balance", "Unity", "Movement", "Contrast"],
+          answer: 2,
+          why: "Movement guides the viewer's eye through the composition, often along a directional path like a diagonal or curve."
+        },
+        {
+          demo: "pattern",
+          q: "A grid of identical small shapes repeats evenly across the whole surface. Which principle is at work?",
+          options: ["Pattern", "Emphasis", "Proportion", "Balance"],
+          answer: 0,
+          why: "Pattern is the repetition of an element in a predictable, often decorative, arrangement."
+        },
+        {
+          demo: "rhythm",
+          q: "Shapes repeat in a row, but alternate large-small-large-small in a steady beat. Which principle is at work?",
+          options: ["Contrast", "Rhythm", "Unity", "Emphasis"],
+          answer: 1,
+          why: "Rhythm is repetition with variation — like a musical beat, it creates a sense of organized movement across time or space."
+        },
+        {
+          demo: "unity",
+          q: "Every shape shares the same muted color family and rounded style, so the group reads as one whole. Which principle is at work?",
+          options: ["Movement", "Pattern", "Unity", "Balance"],
+          answer: 2,
+          why: "Unity (or harmony) occurs when the parts of a composition feel like they belong together, often through shared color, shape, or texture."
+        }
+      ]
+    },
+    {
+      id: "color",
+      name: "The Rose Window of Color",
+      sub: "Color Theory",
+      color: "var(--emerald-light)",
+      cssColor: "#3a9066",
+      icon: "◉",
+      type: "color",
+      intro: [
+        "No chapel burns brighter than this one. Light passing through colored glass is the oldest lesson a cathedral can teach: how colors are born from one another, and how they feel — warm as candlefire, or cool as stone.",
+        "First, predict what the glassmakers discover when two primaries meet. Then, sort the panes by temperature."
+      ],
+      mixRounds: [
+        { a: { hex: "#c1443a", label: "Red" }, b: { hex: "#e8c96a", label: "Yellow" }, options: [
+          { hex: "#dd8c3c", label: "Orange", correct: true },
+          { hex: "#3a9066", label: "Green", correct: false },
+          { hex: "#7a4fa8", label: "Purple", correct: false }
+        ]},
+        { a: { hex: "#e8c96a", label: "Yellow" }, b: { hex: "#3f66ab", label: "Blue" }, options: [
+          { hex: "#7a4fa8", label: "Purple", correct: false },
+          { hex: "#3a9066", label: "Green", correct: true },
+          { hex: "#c1443a", label: "Red", correct: false }
+        ]},
+        { a: { hex: "#3f66ab", label: "Blue" }, b: { hex: "#c1443a", label: "Red" }, options: [
+          { hex: "#dd8c3c", label: "Orange", correct: false },
+          { hex: "#3a9066", label: "Green", correct: false },
+          { hex: "#7a4fa8", label: "Purple", correct: true }
+        ]}
+      ],
+      warmCool: [
+        { hex: "#c1443a", label: "Red", temp: "warm" },
+        { hex: "#dd8c3c", label: "Orange", temp: "warm" },
+        { hex: "#e8c96a", label: "Yellow", temp: "warm" },
+        { hex: "#3f66ab", label: "Blue", temp: "cool" },
+        { hex: "#3a9066", label: "Green", temp: "cool" },
+        { hex: "#4b2e6b", label: "Violet", temp: "cool" }
+      ]
+    },
+    {
+      id: "history",
+      name: "The Chronicle Crypt",
+      sub: "Art History & Movements",
+      color: "var(--ruby-light)",
+      cssColor: "#b23a3a",
+      icon: "⚜",
+      type: "order",
+      intro: [
+        "Below the nave lie the bones of everything that came before — the movements that each answered, argued with, or overturned the one before it.",
+        "The crypt has fallen into disorder. Set the eras back into their true sequence, oldest to newest."
+      ],
+      eras: [
+        { name: "Romanesque", date: "c. 1000 – 1150", note: "Thick walls, round arches, and stone barrel vaults built for defense as much as devotion." },
+        { name: "Gothic", date: "c. 1150 – 1400", note: "Pointed arches and flying buttresses let walls dissolve into stained glass and soaring light." },
+        { name: "Renaissance", date: "c. 1400 – 1600", note: "A rebirth of classical proportion, linear perspective, and humanist subject matter." },
+        { name: "Baroque", date: "c. 1600 – 1750", note: "Drama, movement, and dramatic light-and-dark (chiaroscuro) built to overwhelm the senses." },
+        { name: "Impressionism", date: "c. 1860 – 1890", note: "Loose brushwork and everyday subjects painted to capture fleeting light, often outdoors." },
+        { name: "Modernism / Cubism", date: "c. 1900 – 1950", note: "Fractured perspective and abstraction broke the picture plane into multiple viewpoints at once." },
+        { name: "Contemporary", date: "1970 – present", note: "A pluralistic era spanning installation, digital, performance, and every medium at once." }
+      ]
+    },
+    {
+      id: "media",
+      name: "The Nave of Media",
+      sub: "Art Forms & Materials",
+      color: "var(--amber-light)",
+      cssColor: "#dd8c3c",
+      icon: "✦",
+      type: "sort",
+      intro: [
+        "The long nave is where pilgrims of every craft walk together — the painter beside the weaver, the printmaker beside the sculptor.",
+        "Read each pilgrim's work, and send them to the correct guild."
+      ],
+      bins: ["Painting", "Sculpture", "Printmaking", "Textile / Fiber Art", "Photography", "Installation / Mixed Media"],
+      chips: [
+        { label: "Oil pigment layered on stretched canvas with a brush", bin: "Painting" },
+        { label: "A figure carved from marble, freed from a solid block", bin: "Sculpture" },
+        { label: "An image pulled in reversed ink from a carved woodblock", bin: "Printmaking" },
+        { label: "Hand-dyed fibers woven into a patterned cloth", bin: "Textile / Fiber Art" },
+        { label: "A single frozen moment captured through a lens on film", bin: "Photography" },
+        { label: "A room-sized environment combining found objects, light, and sound", bin: "Installation / Mixed Media" },
+        { label: "An edition of identical images pressed from an inked screen", bin: "Printmaking" },
+        { label: "A bronze figure cast from a wax model", bin: "Sculpture" }
+      ]
+    }
+  ];
+
+  var state = loadState();
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { completed: {}, scores: {} };
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var elIntro = document.getElementById("screen-intro");
+  var elNave = document.getElementById("screen-nave");
+  var elComplete = document.getElementById("screen-complete");
+  var elGrid = document.getElementById("chapel-grid");
+  var elOverlay = document.getElementById("modal-overlay");
+  var elModalBody = document.getElementById("modal-body");
+  var elProgressText = document.getElementById("progress-text");
+  var elRose = document.getElementById("rose-progress");
+
+  function showScreen(el) {
+    [elIntro, elNave, elComplete].forEach(function (s) { s.classList.remove("active"); });
+    el.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function completedCount() {
+    return CHAPELS.filter(function (c) { return state.completed[c.id]; }).length;
+  }
+
+  function renderNave() {
+    elGrid.innerHTML = CHAPELS.map(function (c) {
+      var done = !!state.completed[c.id];
+      return (
+        '<div class="chapel-card" data-done="' + done + '" data-action="open-chapel" data-chapel="' + c.id + '">' +
+          '<div class="chapel-glass" style="background:radial-gradient(circle,' + c.cssColor + (done ? '55' : '22') + ',transparent 75%);border-color:' + (done ? c.cssColor : 'rgba(232,201,106,.5)') + ';">' + c.icon + '</div>' +
+          '<div class="chapel-name">' + c.name + '</div>' +
+          '<div class="chapel-sub">' + c.sub + '</div>' +
+          '<span class="chapel-status">' + (done ? "Illuminated" : "Enter") + '</span>' +
+        '</div>'
+      );
+    }).join("");
+
+    var n = completedCount();
+    CHAPELS.forEach(function (c, i) {
+      elRose.style.setProperty("--c" + i, state.completed[c.id] ? c.cssColor : "");
+    });
+    elProgressText.textContent = n + " of " + CHAPELS.length + " chapels illuminated";
+    document.getElementById("nave-cta").style.display = n === CHAPELS.length ? "flex" : "none";
+
+    if (n === CHAPELS.length) {
+      var scoreLines = CHAPELS.map(function (c) {
+        var s = state.scores[c.id];
+        return s ? c.name + ": " + s : "";
+      }).filter(Boolean);
+      document.getElementById("final-score").innerHTML = scoreLines.join("<br>");
+    }
+  }
+
+  function openChapel(id) {
+    var chapel = CHAPELS.filter(function (c) { return c.id === id; })[0];
+    if (!chapel) return;
+    renderChapterIntro(chapel);
+    elOverlay.classList.add("open");
+  }
+
+  function closeModal() {
+    elOverlay.classList.remove("open");
+    elModalBody.innerHTML = "";
+  }
+
+  function chapterHeader(chapel) {
+    return (
+      '<div class="chapter-kicker">' +
+        '<p class="eyebrow">Chapel</p>' +
+        '<h2>' + chapel.name + '</h2>' +
+        '<p class="chapel-sub">' + chapel.sub + '</p>' +
+      '</div>'
+    );
+  }
+
+  function renderChapterIntro(chapel) {
+    var already = state.completed[chapel.id];
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<div class="lesson-text">' + chapel.intro.map(function (p) { return "<p>" + p + "</p>"; }).join("") + '</div>' +
+      (already ? '<p class="seal-banner">Already illuminated — enter again to review.</p>' : '') +
+      '<div class="chapter-actions"><button class="btn-gold" data-action="begin" data-chapel="' + chapel.id + '">' + (already ? "Review this Chapel" : "Begin the Rite") + '</button></div>';
+  }
+
+  function beginChapel(chapel) {
+    if (chapel.type === "match") renderMatch(chapel);
+    else if (chapel.type === "quiz") renderQuiz(chapel, 0, 0, []);
+    else if (chapel.type === "color") renderColorMix(chapel, 0, 0);
+    else if (chapel.type === "order") renderOrder(chapel, shuffled(chapel.eras));
+    else if (chapel.type === "sort") renderSort(chapel, chapel.chips.map(function (c, i) { return { idx: i, placed: false }; }), null);
+  }
+
+  function shuffled(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  /* ── MATCH ─────────────────────────────────────────── */
+  function renderMatch(chapel) {
+    var terms = shuffled(chapel.pairs.map(function (p) { return p.term; }));
+    var defs = shuffled(chapel.pairs.map(function (p) { return { term: p.term, def: p.def }; }));
+    var matched = {};
+    var wrongCount = 0;
+    var selectedTerm = null;
+
+    function draw() {
+      var matchedN = Object.keys(matched).length;
+      elModalBody.innerHTML =
+        chapterHeader(chapel) +
+        '<p class="lesson-text center">Click a term, then click its matching stone.</p>' +
+        '<div class="match-grid">' +
+          '<div class="match-col">' + terms.map(function (t) {
+            var cls = matched[t] ? "matched" : (selectedTerm === t ? "selected" : "");
+            return '<button class="match-item ' + cls + '" data-action="match-term" data-term="' + esc(t) + '"' + (matched[t] ? " disabled" : "") + '>' + t + '</button>';
+          }).join("") + '</div>' +
+          '<div class="match-col">' + defs.map(function (d) {
+            var cls = matched[d.term] ? "matched" : "";
+            return '<button class="match-item ' + cls + '" data-action="match-def" data-term="' + esc(d.term) + '"' + (matched[d.term] ? " disabled" : "") + '>' + d.def + '</button>';
+          }).join("") + '</div>' +
+        '</div>' +
+        '<p class="seal-banner">' + matchedN + ' / ' + terms.length + ' matched' + (wrongCount ? " · " + wrongCount + " missed attempt" + (wrongCount === 1 ? "" : "s") : "") + '</p>' +
+        '<div class="chapter-actions">' +
+          (matchedN === terms.length
+            ? '<button class="btn-gold" data-action="seal" data-chapel="' + chapel.id + '" data-score="' + scoreLabel(matchedN, wrongCount) + '">Seal this Chapel</button>'
+            : '<button class="btn-ghost" data-action="open-chapel" data-chapel="' + chapel.id + '">Read the Lesson Again</button>') +
+        '</div>';
+    }
+
+    function scoreLabel(n, wrong) {
+      var attempts = n + wrong;
+      var pct = Math.round((n / attempts) * 100);
+      return pct + "% accuracy";
+    }
+
+    elModalBody.__matchHandlers = {
+      term: function (term) {
+        if (matched[term]) return;
+        selectedTerm = (selectedTerm === term) ? null : term;
+        draw();
+      },
+      def: function (term) {
+        if (matched[term]) return;
+        if (!selectedTerm) return;
+        if (selectedTerm === term) {
+          matched[term] = true;
+          selectedTerm = null;
+          draw();
+        } else {
+          wrongCount++;
+          selectedTerm = null;
+          draw();
+        }
+      }
+    };
+    draw();
+  }
+
+  /* ── QUIZ ──────────────────────────────────────────── */
+  function demoMarkup(kind) {
+    if (kind === "symBalance") {
+      return '<div class="demo-box"><div class="demo-sq" style="left:38%;top:35%;"></div><div class="demo-sq" style="left:58%;top:35%;"></div><div style="position:absolute;left:50%;top:10%;bottom:10%;width:1px;background:rgba(232,201,106,.3);"></div></div>';
+    }
+    if (kind === "emphasis") {
+      var dots = "";
+      for (var i = 0; i < 12; i++) {
+        var x = 8 + (i % 4) * 24, y = 15 + Math.floor(i / 4) * 30;
+        dots += '<div class="demo-dot" style="left:' + x + '%;top:' + y + '%;background:#5a5648;width:10px;height:10px;"></div>';
+      }
+      dots += '<div class="demo-dot" style="left:56%;top:45%;background:#c1443a;width:18px;height:18px;box-shadow:0 0 12px #c1443a;"></div>';
+      return '<div class="demo-box">' + dots + '</div>';
+    }
+    if (kind === "movement") {
+      var sq = "";
+      for (var j = 0; j < 5; j++) {
+        var s = 8 + j * 5;
+        sq += '<div class="demo-sq" style="left:' + (10 + j * 16) + '%;top:' + (75 - j * 14) + '%;width:' + s + 'px;height:' + s + 'px;background:var(--amber-light);"></div>';
+      }
+      return '<div class="demo-box">' + sq + '</div>';
+    }
+    if (kind === "pattern") {
+      var g = "";
+      for (var r = 0; r < 3; r++) for (var c = 0; c < 6; c++) {
+        g += '<div class="demo-sq" style="left:' + (5 + c * 16) + '%;top:' + (15 + r * 30) + '%;width:10px;height:10px;background:var(--emerald-light);"></div>';
+      }
+      return '<div class="demo-box">' + g + '</div>';
+    }
+    if (kind === "rhythm") {
+      var row = "";
+      for (var k = 0; k < 6; k++) {
+        var big = k % 2 === 0;
+        var size = big ? 20 : 10;
+        row += '<div class="demo-dot" style="left:' + (6 + k * 15) + '%;top:' + (50 - size / 2 / 1.3) + '%;width:' + size + 'px;height:' + size + 'px;background:var(--sapphire-light);"></div>';
+      }
+      return '<div class="demo-box">' + row + '</div>';
+    }
+    if (kind === "unity") {
+      var u = "";
+      for (var m = 0; m < 6; m++) {
+        u += '<div class="demo-dot" style="left:' + (12 + (m % 3) * 22) + '%;top:' + (28 + Math.floor(m / 3) * 34) + '%;background:var(--amethyst-light);width:16px;height:16px;border-radius:6px;"></div>';
+      }
+      return '<div class="demo-box">' + u + '</div>';
+    }
+    return '<div class="demo-box"></div>';
+  }
+
+  function renderQuiz(chapel, qIndex, correctCount, answered) {
+    var total = chapel.questions.length;
+    if (qIndex >= total) {
+      var pct = Math.round((correctCount / total) * 100);
+      elModalBody.innerHTML =
+        chapterHeader(chapel) +
+        '<p class="lesson-text center">You answered ' + correctCount + ' of ' + total + ' correctly (' + pct + '%).</p>' +
+        '<div class="chapter-actions">' +
+          '<button class="btn-gold" data-action="seal" data-chapel="' + chapel.id + '" data-score="' + pct + '% correct">Seal this Chapel</button>' +
+        '</div>';
+      return;
+    }
+    var q = chapel.questions[qIndex];
+    var wasAnswered = answered[qIndex] !== undefined;
+    var picked = answered[qIndex];
+
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<p class="quiz-progress">Pane ' + (qIndex + 1) + ' of ' + total + '</p>' +
+      demoMarkup(q.demo) +
+      '<p class="quiz-q">' + q.q + '</p>' +
+      '<div class="quiz-options">' + q.options.map(function (opt, i) {
+        var cls = "";
+        if (wasAnswered) {
+          if (i === q.answer) cls = "correct";
+          else if (i === picked) cls = "incorrect";
+        }
+        return '<button class="quiz-opt ' + cls + '" data-action="quiz-answer" data-idx="' + i + '"' + (wasAnswered ? " disabled" : "") + '>' + opt + '</button>';
+      }).join("") + '</div>' +
+      '<p class="quiz-feedback">' + (wasAnswered ? q.why : "") + '</p>' +
+      '<div class="chapter-actions">' +
+        (wasAnswered ? '<button class="btn-gold" data-action="quiz-next" data-chapel="' + chapel.id + '">' + (qIndex + 1 < total ? "Next Pane" : "See Results") + '</button>' : '') +
+      '</div>';
+
+    elModalBody.__quizState = { chapel: chapel, qIndex: qIndex, correctCount: correctCount, answered: answered };
+  }
+
+  /* ── COLOR ─────────────────────────────────────────── */
+  function renderColorMix(chapel, round, score) {
+    if (round < chapel.mixRounds.length) {
+      var r = chapel.mixRounds[round];
+      elModalBody.innerHTML =
+        chapterHeader(chapel) +
+        '<p class="quiz-progress">Mixing ' + (round + 1) + ' of ' + chapel.mixRounds.length + '</p>' +
+        '<p class="quiz-q">Two panes of glass overlap in the window. What color do they become?</p>' +
+        '<div class="swatch-row">' +
+          '<div><div class="swatch" style="background:' + r.a.hex + ';"></div></div>' +
+          '<div class="mix-plus">+</div>' +
+          '<div><div class="swatch" style="background:' + r.b.hex + ';"></div></div>' +
+        '</div>' +
+        '<div class="mix-options">' + shuffled(r.options).map(function (o) {
+          return '<div class="mix-opt" data-action="mix-pick" data-chapel="' + chapel.id + '" data-round="' + round + '" data-score="' + score + '" data-correct="' + o.correct + '">' +
+            '<div class="swatch" style="background:' + o.hex + ';"></div><span>' + o.label + '</span></div>';
+        }).join("") + '</div>' +
+        '<p class="quiz-feedback" id="mix-feedback"></p>';
+      return;
+    }
+    renderWarmCool(chapel, chapel.warmCool.map(function (c, i) { return { idx: i, placed: false }; }), score, null);
+  }
+
+  function renderWarmCool(chapel, chips, score, selectedIdx) {
+    var allPlaced = chips.every(function (c) { return c.placed; });
+    if (allPlaced) {
+      var pct = Math.round((score / (chapel.mixRounds.length + chapel.warmCool.length)) * 100);
+      elModalBody.innerHTML =
+        chapterHeader(chapel) +
+        '<p class="lesson-text center">The window is complete. You matched ' + score + ' of ' + (chapel.mixRounds.length + chapel.warmCool.length) + ' correctly (' + pct + '%).</p>' +
+        '<div class="chapter-actions">' +
+          '<button class="btn-gold" data-action="seal" data-chapel="' + chapel.id + '" data-score="' + pct + '% correct">Seal this Chapel</button>' +
+        '</div>';
+      return;
+    }
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<p class="quiz-q">Now sort the panes by temperature. Select a pane, then choose its hearth.</p>' +
+      '<div class="chip-pool">' + chips.map(function (c) {
+        if (c.placed) return "";
+        var color = chapel.warmCool[c.idx];
+        return '<button class="chip' + (selectedIdx === c.idx ? " selected" : "") + '" data-action="wc-select" data-idx="' + c.idx + '" style="border-color:' + color.hex + ';">' + color.label + '</button>';
+      }).join("") + '</div>' +
+      '<div class="bin-row">' +
+        ["warm", "cool"].map(function (t) {
+          return '<div class="bin" data-action="wc-bin" data-temp="' + t + '"><h4>' + (t === "warm" ? "Warm" : "Cool") + '</h4>' +
+            chips.filter(function (c) { return c.placed && chapel.warmCool[c.idx].temp === t; }).map(function (c) {
+              return '<div class="placed-chip">' + chapel.warmCool[c.idx].label + '</div>';
+            }).join("") +
+          '</div>';
+        }).join("") +
+      '</div>' +
+      '<p class="seal-banner" id="wc-feedback"></p>';
+
+    elModalBody.__wc = { chapel: chapel, chips: chips, score: score, selectedIdx: selectedIdx };
+  }
+
+  /* ── ORDER ─────────────────────────────────────────── */
+  function renderOrder(chapel, order, checked) {
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<p class="lesson-text center">Use the arrows to arrange the eras from oldest to newest, then check your work.</p>' +
+      '<div class="order-list">' + order.map(function (era, i) {
+        var status = "";
+        if (checked) {
+          var correctIdx = chapel.eras.indexOf(era);
+          status = correctIdx === i ? "correct" : "wrong";
+        }
+        return '<div class="order-row ' + status + (checked ? " revealed" : "") + '">' +
+          '<span class="era-name">' + (i + 1) + '. ' + era.name + '<br><small style="color:var(--parchment-dim);font-style:italic;">' + era.note + '</small></span>' +
+          '<span class="era-date">' + era.date + '</span>' +
+          '<div class="order-btns">' +
+            '<button data-action="order-up" data-idx="' + i + '"' + (i === 0 ? " disabled" : "") + '>&uarr;</button>' +
+            '<button data-action="order-down" data-idx="' + i + '"' + (i === order.length - 1 ? " disabled" : "") + '>&darr;</button>' +
+          '</div>' +
+        '</div>';
+      }).join("") + '</div>' +
+      '<p class="seal-banner">' + (checked ? (allCorrect(order, chapel.eras) ? "The chronicle is whole." : "Some eras still rest out of place. Adjust and check again.") : "") + '</p>' +
+      '<div class="chapter-actions">' +
+        (checked && allCorrect(order, chapel.eras)
+          ? '<button class="btn-gold" data-action="seal" data-chapel="' + chapel.id + '" data-score="ordered correctly">Seal this Chapel</button>'
+          : '<button class="btn-gold" data-action="order-check" data-chapel="' + chapel.id + '">Check the Chronicle</button>') +
+      '</div>';
+
+    elModalBody.__order = { chapel: chapel, order: order, checked: checked };
+  }
+  function allCorrect(order, eras) {
+    for (var i = 0; i < order.length; i++) if (order[i] !== eras[i]) return false;
+    return true;
+  }
+
+  /* ── SORT ──────────────────────────────────────────── */
+  function renderSort(chapel, chips, selectedIdx) {
+    var allPlaced = chips.every(function (c) { return c.placed; });
+    if (allPlaced) {
+      elModalBody.innerHTML =
+        chapterHeader(chapel) +
+        '<p class="lesson-text center">Every pilgrim has found their guild.</p>' +
+        '<div class="chapter-actions">' +
+          '<button class="btn-gold" data-action="seal" data-chapel="' + chapel.id + '" data-score="all guilds matched">Seal this Chapel</button>' +
+        '</div>';
+      return;
+    }
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<p class="lesson-text center">Select a pilgrim, then choose their guild.</p>' +
+      '<div class="chip-pool">' + chips.map(function (c) {
+        if (c.placed) return "";
+        return '<button class="chip' + (selectedIdx === c.idx ? " selected" : "") + '" data-action="sort-select" data-idx="' + c.idx + '">' + chapel.chips[c.idx].label + '</button>';
+      }).join("") + '</div>' +
+      '<div class="bin-row">' + chapel.bins.map(function (b) {
+        return '<div class="bin" data-action="sort-bin" data-bin="' + esc(b) + '"><h4>' + b + '</h4>' +
+          chips.filter(function (c) { return c.placed && chapel.chips[c.idx].bin === b; }).map(function (c) {
+            return '<div class="placed-chip">' + chapel.chips[c.idx].label + '</div>';
+          }).join("") +
+        '</div>';
+      }).join("") + '</div>' +
+      '<p class="seal-banner" id="sort-feedback"></p>';
+
+    elModalBody.__sort = { chapel: chapel, chips: chips, selectedIdx: selectedIdx };
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  }
+
+  function sealChapel(id, scoreLabel) {
+    state.completed[id] = true;
+    state.scores[id] = scoreLabel;
+    saveState();
+    var chapel = CHAPELS.filter(function (c) { return c.id === id; })[0];
+    elModalBody.innerHTML =
+      chapterHeader(chapel) +
+      '<div class="rose-hero complete" style="width:110px;height:110px;filter:none;background:radial-gradient(circle,' + chapel.cssColor + ',transparent 70%);opacity:1;"></div>' +
+      '<p class="lesson-text center">The window is sealed. ' + chapel.name + ' now burns with light.</p>' +
+      '<div class="chapter-actions"><button class="btn-ghost" data-action="return-nave">Return to the Nave</button></div>';
+    renderNave();
+  }
+
+  /* ── EVENT DELEGATION ─────────────────────────────── */
+  document.body.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var action = t.dataset.action;
+
+    if (action === "enter-nave") { renderNave(); showScreen(elNave); }
+    else if (action === "restart") { showScreen(elIntro); }
+    else if (action === "view-complete") { renderNave(); showScreen(elComplete); }
+    else if (action === "open-chapel") { openChapel(t.dataset.chapel); }
+    else if (action === "close-modal") { closeModal(); }
+    else if (action === "begin") {
+      var chapel = CHAPELS.filter(function (c) { return c.id === t.dataset.chapel; })[0];
+      beginChapel(chapel);
+    }
+    else if (action === "match-term") { elModalBody.__matchHandlers.term(t.dataset.term); }
+    else if (action === "match-def") { elModalBody.__matchHandlers.def(t.dataset.term); }
+    else if (action === "quiz-answer") {
+      var qs = elModalBody.__quizState;
+      var idx = parseInt(t.dataset.idx, 10);
+      var q = qs.chapel.questions[qs.qIndex];
+      var newAnswered = qs.answered.slice();
+      newAnswered[qs.qIndex] = idx;
+      var newCorrect = qs.correctCount + (idx === q.answer ? 1 : 0);
+      renderQuiz(qs.chapel, qs.qIndex, newCorrect, newAnswered);
+    }
+    else if (action === "quiz-next") {
+      var qs2 = elModalBody.__quizState;
+      renderQuiz(qs2.chapel, qs2.qIndex + 1, qs2.correctCount, qs2.answered);
+    }
+    else if (action === "mix-pick") {
+      var chapelC = CHAPELS.filter(function (c) { return c.id === t.dataset.chapel; })[0];
+      var round = parseInt(t.dataset.round, 10);
+      var score = parseInt(t.dataset.score, 10);
+      var correct = t.dataset.correct === "true";
+      var fb = document.getElementById("mix-feedback");
+      if (fb) fb.textContent = correct ? "Radiant — the light passes true." : "The glass darkens. Try to remember for next time.";
+      setTimeout(function () { renderColorMix(chapelC, round + 1, score + (correct ? 1 : 0)); }, 550);
+    }
+    else if (action === "wc-select") {
+      var wc = elModalBody.__wc;
+      var idx = parseInt(t.dataset.idx, 10);
+      renderWarmCool(wc.chapel, wc.chips, wc.score, wc.selectedIdx === idx ? null : idx);
+    }
+    else if (action === "wc-bin") {
+      var wc2 = elModalBody.__wc;
+      if (wc2.selectedIdx === null || wc2.selectedIdx === undefined) return;
+      var temp = t.dataset.temp;
+      var color = wc2.chapel.warmCool[wc2.selectedIdx];
+      var correct = color.temp === temp;
+      var newChips = wc2.chips.map(function (c) {
+        return c.idx === wc2.selectedIdx ? { idx: c.idx, placed: correct } : c;
+      });
+      renderWarmCool(wc2.chapel, newChips, wc2.score + (correct ? 1 : 0), null);
+      if (!correct) {
+        setTimeout(function () {
+          var fb = document.getElementById("wc-feedback");
+          if (fb) fb.textContent = color.label + " is not " + temp + " — feel its true temperature and try again.";
+        }, 30);
+      }
+    }
+    else if (action === "order-up" || action === "order-down") {
+      var od = elModalBody.__order;
+      var i2 = parseInt(t.dataset.idx, 10);
+      var j2 = action === "order-up" ? i2 - 1 : i2 + 1;
+      var newOrder = od.order.slice();
+      var tmp = newOrder[i2]; newOrder[i2] = newOrder[j2]; newOrder[j2] = tmp;
+      renderOrder(od.chapel, newOrder, false);
+    }
+    else if (action === "order-check") {
+      var od2 = elModalBody.__order;
+      renderOrder(od2.chapel, od2.order, true);
+    }
+    else if (action === "sort-select") {
+      var so = elModalBody.__sort;
+      var idx3 = parseInt(t.dataset.idx, 10);
+      renderSort(so.chapel, so.chips, so.selectedIdx === idx3 ? null : idx3);
+    }
+    else if (action === "sort-bin") {
+      var so2 = elModalBody.__sort;
+      if (so2.selectedIdx === null || so2.selectedIdx === undefined) return;
+      var binName = t.dataset.bin;
+      var chipDef = so2.chapel.chips[so2.selectedIdx];
+      var correctBin = chipDef.bin === binName;
+      var newChips2 = so2.chips.map(function (c) {
+        return c.idx === so2.selectedIdx ? { idx: c.idx, placed: correctBin } : c;
+      });
+      renderSort(so2.chapel, newChips2, null);
+      if (!correctBin) {
+        setTimeout(function () {
+          var fb = document.getElementById("sort-feedback");
+          if (fb) fb.textContent = "That pilgrim belongs to another guild. Look again at their craft.";
+        }, 30);
+      }
+    }
+    else if (action === "seal") { sealChapel(t.dataset.chapel, t.dataset.score); }
+    else if (action === "return-nave") { closeModal(); renderNave(); }
+  });
+
+  document.body.addEventListener("click", function (e) {
+    if (e.target === elOverlay) closeModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && elOverlay.classList.contains("open")) closeModal();
+  });
+
+  renderNave();
+})();
+</script>
+</body>
+</html>
